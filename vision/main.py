@@ -3,7 +3,9 @@ import numpy as np
 import time
 
 # Load Yolo
-net = cv2.dnn.readNet("weights/yolov3-tiny.weights", "cfg/yolov3-tiny.cfg")
+
+net = cv2.dnn.readNet("lib/yolov3.weights", "cfg/yolov3.cfg")
+
 classes = []
 
 # Load coco
@@ -14,7 +16,7 @@ output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 colors = np.random.uniform(0, 255, size=(len(classes), 3))
 
 # Loading video
-cap = cv2.VideoCapture("vidoes/footage-young.webm")
+cap = cv2.VideoCapture("videos/footage-young.webm")
 
 font = cv2.FONT_HERSHEY_PLAIN
 starting_time = time.time()
@@ -57,14 +59,17 @@ while True:
 
     indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.4, 0.3)
 
+    num_of_people = 0
     for i in range(len(boxes)):
         if i in indexes:
             x, y, w, h = boxes[i]
             label = str(classes[class_ids[i]])
+            num_of_people += label.count('person')
             confidence = confidences[i]
             color = colors[class_ids[i]]
             cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
             cv2.putText(frame, label + " " + str(round(confidence, 2)), (x, y + 30), font, 2, color, 2)
+    print(num_of_people)
 
 
 
