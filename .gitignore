@@ -1,2 +1,3 @@
 venv/
 env/
+vision/lib/yolov3.weights
