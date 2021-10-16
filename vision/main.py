@@ -1,9 +1,10 @@
 import cv2
 import numpy as np
 import time
+import pafy
 
 # Load Yolo
-net = cv2.dnn.readNet("weights/yolov3-tiny.weights", "cfg/yolov3-tiny.cfg")
+net = cv2.dnn.readNet('weights/yolov3.weights', 'cfg/yolov3.cfg')
 classes = []
 
 # Load coco
@@ -14,7 +15,12 @@ output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 colors = np.random.uniform(0, 255, size=(len(classes), 3))
 
 # Loading video
-cap = cv2.VideoCapture("vidoes/footage-young.webm")
+
+url = "https://www.youtube.com/watch?v=RQA5RcIZlAM"
+video = pafy.new(url)
+best = video.getbest(preftype="mp4")
+
+cap = cv2.VideoCapture(best.url)
 
 font = cv2.FONT_HERSHEY_PLAIN
 starting_time = time.time()
@@ -60,9 +66,9 @@ while True:
     for i in range(len(boxes)):
         if i in indexes:
             x, y, w, h = boxes[i]
-            label = str(classes[class_ids[i]])
+            label = "person"
             confidence = confidences[i]
-            color = colors[class_ids[i]]
+            color = colors[0]
             cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
             cv2.putText(frame, label + " " + str(round(confidence, 2)), (x, y + 30), font, 2, color, 2)
 
